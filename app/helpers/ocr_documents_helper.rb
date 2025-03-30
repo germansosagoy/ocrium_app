@@ -1,0 +1,2 @@
+module OcrDocumentsHelper
+end
