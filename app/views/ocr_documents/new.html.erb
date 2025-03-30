@@ -1,0 +1,32 @@
+<div class="min-h-screen bg-gray-100 flex items-center justify-center">
+  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center">Cargar nuevo documento</h2>
+    
+    <%=form_with model: @ocr_document, local: true, class: "space-y-6" do |form| %>
+      <% if @ocr_document.errors.any? %>
+        <div class="bg-red-100 text-red-700 p-4 rounded-lg">
+          <h3 class="font-bold">Hubo errores en el documento:</h3>
+          <ul class="list-disc list-inside">
+            <% @ocr_document.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="space-y-2">
+        <%= form.label :title, class: "block font-medium text-gray-700" %>
+        <%= form.text_field :title, class: "block w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div class="space-y-2">
+        <%= form.label :file, class: "block font-medium text-gray-700" %>
+        <%= form.file_field :file, class: "block w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+      </div>
+
+      <div>
+        <%= form.submit "Upload Document", class: "w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+      </div>
+    <% end %>
+  </div>
+</div>

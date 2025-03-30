@@ -1,4 +1,11 @@
-<div>
-  <h1 class="font-bold text-4xl">OcrDocuments#show</h1>
-  <p>Find me in app/views/ocr_documents/show.html.erb</p>
-</div>
+<p>
+  <strong>File:</strong>
+  <%= link_to @ocr_document.file.filename.to_s, rails_blob_path(@ocr_document.file, disposition: "attachment") %>
+</p>
+
+<% if @ocr_text.present? %>
+  <p>
+    <strong>OCR Text:</strong>
+    <pre><%= @ocr_text %></pre>
+  </p>
+<% end %>
