@@ -1,11 +1,64 @@
-<p>
-  <strong>File:</strong>
-  <%= link_to @ocr_document.file.filename.to_s, rails_blob_path(@ocr_document.file, disposition: "attachment") %>
-</p>
-
-<% if @ocr_text.present? %>
-  <p>
-    <strong>OCR Text:</strong>
-    <pre><%= @ocr_text %></pre>
-  </p>
-<% end %>
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold"><%= @ocr_document.title || "Documento OCR" %></h1>
+    <p class="text-gray-600"><%= "Categoría: #{@category}" if @category.present? %></p>
+    <p class="mt-2">
+      <%= link_to "← Volver", ocr_documents_path, class: "text-blue-600 hover:underline" %>
+      <% if @ocr_document.file.attached? %>
+        | <%= link_to "Descargar archivo", rails_blob_path(@ocr_document.file, disposition: "attachment"), class: "text-blue-600 hover:underline" %>
+      <% end %>
+    </p>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- info del documento -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-semibold mb-4">Análisis del documento</h2>
+      <div class="prose max-w-none">
+        <%= simple_format(@ocr_document.description) if @ocr_document.description.present? %>
+      </div>
+      
+      <% if @entities.present? %>
+        <h3 class="text-lg font-semibold mt-6 mb-2">Entidades detectadas</h3>
+        <div class="space-y-2">
+          <% @entities.each do |key, values| %>
+            <% if values.present? && values.any? %>
+              <div>
+                <span class="font-medium"><%= key.humanize %>:</span>
+                <% if values.is_a?(Array) %>
+                  <span><%= values.join(", ") %></span>
+                <% else %>
+                  <span><%= values %></span>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-semibold mb-4">Texto extraído por OCR</h2>
+      <div class="bg-gray-50 p-4 rounded border overflow-auto max-h-96">
+        <pre class="whitespace-pre-wrap text-sm"><%= @ocr_document.extracted_text || "No se ha podido extraer texto." %></pre>
+      </div>
+    </div>
+  </div>
+  <!-- seccion de preguntas -->
+  <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-xl font-semibold mb-4">Preguntar sobre este documento</h2>
+    
+    <%= form_with url: ask_ocr_document_path(@ocr_document), method: :post, local: true, class: "mb-4" do |f| %>
+      <div class="flex">
+        <%= f.text_field :question, placeholder: "¿Qué quieres saber sobre este documento?", 
+                        class: "flex-grow px-4 py-2 border rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+        <%= f.submit "Preguntar", class: "bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-700" %>
+      </div>
+    <% end %>
+    
+    <% if @question.present? && @answer.present? %>
+      <div class="mt-4 p-4 bg-gray-50 rounded border">
+        <p class="font-medium">Pregunta: <%= @question %></p>
+        <p class="mt-2"><%= @answer %></p>
+      </div>
+    <% end %>
+  </div>
+</div>
